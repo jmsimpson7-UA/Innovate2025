@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HL7 Heaven</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+</head>
+<body class="bg-light" onload="getAllHL7()">
+    <script src="./js/index.js"></script>
+    <header class="hero">
+        <div class="hero-content">
+            <h1 class="text-center">HL7 Heaven</h1>
+            <input type="text" id="searchInput" class="form-control" placeholder="Search" onkeyup="searchHL7()" size="45"> <br>
+            <select id="searchCategory" class="form-select ms-2" onchange="searchHL7()" style="width: 200px;">
+                <option value="controlId">Message Control ID</option>
+                <option value="mrn">MRN</option>
+                <option value="lastName">Last Name</option>
+            </select>
+        </div>
+    </header> <br>
+    <div class="row-mt-4">
+        <div class="col-md-6" style="float:left">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">HL7 Input</div>
+                <div class="card-body">
+                    <ul id="hl7List" class="list-group mb-3"></ul>
+                        <nav>
+                            <ul class="pagination justify-content-center">
+                                <li class="page-item"><button class="page-link" onclick="prevPage()">Previous</button></li>
+                                <li class="page-item"><span class="page-link" id="pageIndicator">1</span></li>
+                                <li class="page-item"><button class="page-link" onclick="nextPage()">Next</button></li>
+                            </ul>
+                        </nav>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6" style="float:right">
+            <div class="card shadow-sm">
+                <div class="card-header bg-success text-white">HL7 Output</div>
+                <div class="card-body">
+                    <ul id="convertedList" class="list-group mb-3"></ul> 
+                </div>
+            </div>
+        </div>
+    </div>
+    
+</body>
+</html>
