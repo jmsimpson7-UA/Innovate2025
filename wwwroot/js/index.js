@@ -1,4 +1,5 @@
 let currentPage = 1;
+let currentPageDE = 1;
 const pageSize = 10;
 let hl7Messages = [];
 let convertedMessages = [];
@@ -39,7 +40,7 @@ function getAllHL7() {
             convertedMessages = hl7Messages.map(msg => `Converted: ${msg}`);
 
             if (hl7Messages.length > 0) {
-                loadPageDE(currentPage);
+                loadPageDE(currentPageDE);
             } else {
                 console.error("HL7 file is empty.");
             }
@@ -201,15 +202,15 @@ function searchHL7() {
             const pidSegment = segments.find(seg => seg.startsWith('PID'));
             if (pidSegment) {
                 const fields = pidSegment.split('|');
-                return fields[2] && fields[2].toLowerCase().includes(query);
+                return fields[3] && fields[3].toLowerCase().includes(query);
             }
         } else if (category === "lastName") {
             // PID-5: Patient Name (contains last name)
             const pidSegment = segments.find(seg => seg.startsWith('PID'));
             if (pidSegment) {
                 const fields = pidSegment.split('|');
-                if (fields[4]) {
-                    const nameParts = fields[4].split('^');
+                if (fields[5]) {
+                    const nameParts = fields[5].split('^');
                     return nameParts[0] && nameParts[0].toLowerCase().includes(query);
                 }
             }
@@ -312,18 +313,32 @@ function nextPage() {
     }
 }
 
-function loadPageDE(page) {
-    let start = (page - 1) * pageSize;
-    let end = start + pageSize;
-    let hl7Subset = hl7Messages.slice(start, end);
+function prevPageDE() {
+    if (currentPageDE > 1) {
+        currentPageDE--;
+        loadPageDE(currentPagDE);
+    }
+}
+
+function nextPageDE() {
+    if (currentPageDE < Math.ceil(hl7Messages.length / pageSize)) {
+        currentPageDE++;
+        loadPageDE(currentPageDE);
+    }
+}
+
+function loadPageDE(pageDE) {
+    let startDE = (pageDE - 1) * pageSize;
+    let endDE = startDE + pageSize;
+    let hl7Subset = hl7Messages.slice(startDE, endDE);
 
     let hl7List = document.getElementById("convertedList");
 
     let outputHtml = `<div class="accordion" id="hl7Accordion">`;
 
     hl7Subset.forEach((msg, index) => {
-        let collapseId = `collapse${start + index}`;
-        let headerId = `heading${start + index}`;
+        let collapseId = `collapse${startDE + index}`;
+        let headerId = `heading${startDE + index}`;
 
         // Split the HL7 message into segments based on specific HL7 segment types
         let segments = msg.split(/(?=MSH|EVN|PID|PV1|OBR|ORC)/).filter(seg => seg.trim() !== "");
@@ -382,5 +397,5 @@ function loadPageDE(page) {
     initializeTooltips();
 
     // Update pagination indicator
-    document.getElementById("pageIndicator").textContent = page;
+    document.getElementById("pageIndicatorDE").textContent = pageDE;
 }

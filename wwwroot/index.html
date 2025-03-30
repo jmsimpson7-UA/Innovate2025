@@ -40,7 +40,14 @@
             <div class="card shadow-sm">
                 <div class="card-header bg-success text-white">HL7 Output</div>
                 <div class="card-body">
-                    <ul id="convertedList" class="list-group mb-3"></ul> 
+                    <ul id="convertedList" class="list-group mb-3"></ul>
+                    <nav>
+                        <ul class="pagination justify-content-center">
+                            <li class="page-item"><button class="page-link" onclick="prevPageDE()">Previous</button></li>
+                            <li class="page-item"><span class="page-link" id="pageIndicatorDE">1</span></li>
+                            <li class="page-item"><button class="page-link" onclick="nextPageDE()">Next</button></li>
+                        </ul>
+                    </nav> 
                 </div>
             </div>
         </div>
