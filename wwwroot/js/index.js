@@ -78,6 +78,14 @@ function loadPage(page) {
                 if (fieldIndex === 0) {
                     return `<span>${field}</span>`;
                 }
+                // Make MRN clickable for PID segment, field 3
+                if (segmentType === 'PID' && fieldIndex === 3) {
+                    const mrn = field.split('^')[0] || field; // Extract MRN from potentially complex field
+                    return `<span class="hl7-field" 
+                                data-segment="${segmentType}" 
+                                data-field-num="${fieldIndex}"
+                                title="${segmentType}-${fieldIndex} (Click to filter by this MRN)">|<a href="#" onclick="searchByMRN('${mrn}'); return false;" class="mrn-link">${field}</a></span>`;
+                }
                 
                 // Create a span with data attributes for the tooltip
                 return `<span class="hl7-field" 
@@ -121,6 +129,16 @@ function loadPage(page) {
     document.getElementById("pageIndicator").textContent = page;
 }
 
+// New function to search by MRN when clicked
+function searchByMRN(mrn) {
+    // Set the search input and category
+    document.getElementById("searchInput").value = mrn;
+    document.getElementById("searchCategory").value = "mrn";
+    
+    // Call the existing search function
+    searchHL7();
+}
+
 function addFieldHighlightingStyles() {
     // Check if the style already exists
     if (!document.getElementById('hl7-field-styles')) {
@@ -136,6 +154,16 @@ function addFieldHighlightingStyles() {
                 background-color: #ffffc0;
                 box-shadow: 0 0 3px #ffcc00;
                 position: relative;
+            }
+                .mrn-link {
+                color: #0066cc;
+                text-decoration: underline;
+                font-weight: bold;
+            }
+            
+            .mrn-link:hover {
+                color: #004080;
+                background-color: rgba(0, 102, 204, 0.1);
             }
             
             /* Optional: Custom tooltip if not using Bootstrap tooltips */
@@ -202,7 +230,11 @@ function searchHL7() {
             const pidSegment = segments.find(seg => seg.startsWith('PID'));
             if (pidSegment) {
                 const fields = pidSegment.split('|');
-                return fields[3] && fields[3].toLowerCase().includes(query);
+                if (fields[3]) {
+                    // Handle if MRN is in a complex format (e.g., "MRN^TYPE^SYSTEM")
+                    const mrnParts = fields[3].split('^');
+                    return mrnParts[0].toLowerCase().includes(query) || fields[3].toLowerCase().includes(query);
+                }
             }
         } else if (category === "lastName") {
             // PID-5: Patient Name (contains last name)
@@ -256,6 +288,14 @@ function displayFilteredMessages(filteredMessages) {
             let formattedFields = fields.map((field, fieldIndex) => {
                 if (fieldIndex === 0) {
                     return `<span>${field}</span>`;
+                }
+                // Make MRN clickable for PID segment, field 3
+                if (segmentType === 'PID' && fieldIndex === 3) {
+                    const mrn = field.split('^')[0] || field; // Extract MRN from potentially complex field
+                    return `<span class="hl7-field" 
+                                data-segment="${segmentType}" 
+                                data-field-num="${fieldIndex}"
+                                title="${segmentType}-${fieldIndex} (Click to filter by this MRN)">|<a href="#" onclick="searchByMRN('${mrn}'); return false;" class="mrn-link">${field}</a></span>`;
                 }
                 const hl7FieldNumber = fieldIndex + 1;
                 return `<span class="hl7-field" 
@@ -356,6 +396,15 @@ function loadPageDE(pageDE) {
                 // Skip the first "field" as it contains the segment type
                 if (fieldIndex === 0) {
                     return `<span>${field}</span>`;
+                }
+
+                // Make MRN clickable for PID segment, field 3
+                if (segmentType === 'PID' && fieldIndex === 3) {
+                    const mrn = field.split('^')[0] || field; // Extract MRN from potentially complex field
+                    return `<span class="hl7-field" 
+                                data-segment="${segmentType}" 
+                                data-field-num="${fieldIndex}"
+                                title="${segmentType}-${fieldIndex} (Click to filter by this MRN)">|<a href="#" onclick="searchByMRN('${mrn}'); return false;" class="mrn-link">${field}</a></span>`;
                 }
                 
                 // Create a span with data attributes for the tooltip
