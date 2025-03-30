@@ -3,7 +3,7 @@ const pageSize = 10;
 let hl7Messages = [];
 let convertedMessages = [];
 
-function getAllHL7() {
+function getAllHL7DE() {
     fetch('http://localhost:5054/data/default')
         .then(response => response.text())
         .then(text => {
@@ -39,7 +39,7 @@ function getAllHL7() {
             convertedMessages = hl7Messages.map(msg => `Converted: ${msg}`);
 
             if (hl7Messages.length > 0) {
-                loadPage(currentPage);
+                loadPageDE(currentPage);
             } else {
                 console.error("HL7 file is empty.");
             }
@@ -312,3 +312,75 @@ function nextPage() {
     }
 }
 
+function loadPageDE(page) {
+    let start = (page - 1) * pageSize;
+    let end = start + pageSize;
+    let hl7Subset = hl7Messages.slice(start, end);
+
+    let hl7List = document.getElementById("convertedList");
+
+    let outputHtml = `<div class="accordion" id="hl7Accordion">`;
+
+    hl7Subset.forEach((msg, index) => {
+        let collapseId = `collapse${start + index}`;
+        let headerId = `heading${start + index}`;
+
+        // Split the HL7 message into segments based on specific HL7 segment types
+        let segments = msg.split(/(?=MSH|EVN|PID|PV1|OBR|ORC)/).filter(seg => seg.trim() !== "");
+
+        // Format segments with field highlighting
+        let formattedSegments = segments.map(seg => {
+            // Get the segment type (first 3 characters)
+            let segmentType = seg.substring(0, 3);
+            
+            // Split the segment by field separator (|)
+            let fields = seg.split('|');
+            
+            // Format each field with hover capability
+            let formattedFields = fields.map((field, fieldIndex) => {
+                // Skip the first "field" as it contains the segment type
+                if (fieldIndex === 0) {
+                    return `<span>${field}</span>`;
+                }
+                
+                // Create a span with data attributes for the tooltip
+                return `<span class="hl7-field" 
+                              data-segment="${segmentType}" 
+                              data-field-num="${fieldIndex}"
+                              title="${segmentType}-${fieldIndex + 1}">|${field}</span>`;
+            }).join('');
+            
+            return `<div class="p-1 border-bottom hl7-segment">${formattedFields}</div>`;
+        }).join('');
+
+        outputHtml += `
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="${headerId}">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#${collapseId}" aria-expanded="false" aria-controls="${collapseId}">
+                        <pre>${msg}</pre>
+                    </button>
+                </h2>
+                <div id="${collapseId}" class="accordion-collapse collapse" aria-labelledby="${headerId}" data-bs-parent="#hl7Accordion">
+                    <div class="accordion-body">
+                        <strong>HL7 Message Segments:</strong>
+                        <div class="bg-light p-2">${formattedSegments}</div>
+                        <hr>
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+
+    outputHtml += `</div>`; // Close accordion div
+
+    hl7List.innerHTML = outputHtml;
+
+    // Add CSS for field highlighting
+    addFieldHighlightingStyles();
+    
+    // Initialize tooltips if using Bootstrap
+    initializeTooltips();
+
+    // Update pagination indicator
+    document.getElementById("pageIndicator").textContent = page;
+}

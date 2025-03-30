@@ -69,3 +69,4 @@ C:\Users\matth\Innovate2025\api\obj\Debug\net9.0\api.pdb
 C:\Users\matth\Innovate2025\api\obj\Debug\net9.0\api.genruntimeconfig.cache
 C:\Users\matth\Innovate2025\api\obj\Debug\net9.0\ref\api.dll
 C:\Users\matth\Innovate2025\api\bin\Debug\net9.0\Python.Runtime.dll
+C:\Users\matth\Innovate2025\api\obj\Debug\net9.0\api.sourcelink.json
